@@ -9,21 +9,21 @@ export const ScanSettings = () => {
     <div className="grid gap-4">
       <Card>
         <CardHeader>
-          <CardTitle>Scan Configuration</CardTitle>
-          <CardDescription>Configure your security scan preferences.</CardDescription>
+          <CardTitle>Конфігурація сканування</CardTitle>
+          <CardDescription>Налаштуйте параметри сканування безпеки.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>Automatic Scans</Label>
-              <p className="text-sm text-muted-foreground">Run scans automatically on a schedule</p>
+              <Label>Автоматичне сканування</Label>
+              <p className="text-sm text-muted-foreground">Запускати сканування автоматично за розкладом</p>
             </div>
             <Switch />
           </div>
           
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Scan Frequency (hours)</Label>
+              <Label>Частота сканування (годин)</Label>
               <Slider defaultValue={[24]} max={72} min={1} step={1} />
             </div>
           </div>
@@ -31,8 +31,8 @@ export const ScanSettings = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Deep Scan</Label>
-                <p className="text-sm text-muted-foreground">Enable comprehensive security analysis</p>
+                <Label>Глибоке сканування</Label>
+                <p className="text-sm text-muted-foreground">Увімкнути комплексний аналіз безпеки</p>
               </div>
               <Switch />
             </div>

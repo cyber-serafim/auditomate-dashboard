@@ -9,34 +9,34 @@ export const NotificationSettings = () => {
     <div className="grid gap-4">
       <Card>
         <CardHeader>
-          <CardTitle>Notification Preferences</CardTitle>
-          <CardDescription>Configure how you want to receive alerts and notifications.</CardDescription>
+          <CardTitle>Налаштування сповіщень</CardTitle>
+          <CardDescription>Налаштуйте, як ви хочете отримувати сповіщення та повідомлення.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>Email Notifications</Label>
-              <p className="text-sm text-muted-foreground">Receive security alerts via email</p>
+              <Label>Сповіщення електронною поштою</Label>
+              <p className="text-sm text-muted-foreground">Отримувати сповіщення про безпеку електронною поштою</p>
             </div>
             <Switch />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
-            <Input id="email" type="email" placeholder="Enter your email" />
+            <Label htmlFor="email">Адреса електронної пошти</Label>
+            <Input id="email" type="email" placeholder="Введіть вашу електронну пошту" />
           </div>
 
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>Telegram Notifications</Label>
-              <p className="text-sm text-muted-foreground">Receive alerts via Telegram</p>
+              <Label>Сповіщення Telegram</Label>
+              <p className="text-sm text-muted-foreground">Отримувати сповіщення через Telegram</p>
             </div>
             <Switch />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="telegram">Telegram Chat ID</Label>
-            <Input id="telegram" placeholder="Enter your Telegram Chat ID" />
+            <Label htmlFor="telegram">ID чату Telegram</Label>
+            <Input id="telegram" placeholder="Введіть ваш ID чату Telegram" />
           </div>
         </CardContent>
       </Card>

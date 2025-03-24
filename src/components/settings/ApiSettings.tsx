@@ -13,14 +13,14 @@ export const ApiSettings = () => {
     <div className="grid gap-4">
       <Card>
         <CardHeader>
-          <CardTitle>API Configuration</CardTitle>
-          <CardDescription>Manage your API keys for external services.</CardDescription>
+          <CardTitle>Налаштування API</CardTitle>
+          <CardDescription>Керуйте вашими API ключами для зовнішніх сервісів.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="telegram-api">Telegram Bot API Key</Label>
+                <Label htmlFor="telegram-api">API ключ бота Telegram</Label>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -36,16 +36,16 @@ export const ApiSettings = () => {
               <Input
                 id="telegram-api"
                 type={showKeys ? "text" : "password"}
-                placeholder="Enter your Telegram Bot API key"
+                placeholder="Введіть API ключ вашого бота Telegram"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="custom-api">Custom Integration API Key</Label>
+              <Label htmlFor="custom-api">API ключ користувацької інтеграції</Label>
               <Input
                 id="custom-api"
                 type={showKeys ? "text" : "password"}
-                placeholder="Enter your custom integration API key"
+                placeholder="Введіть API ключ вашої користувацької інтеграції"
               />
             </div>
           </div>
