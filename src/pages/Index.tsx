@@ -4,7 +4,8 @@ import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
 import MetricCard from '@/components/ui/MetricCard';
 import StatusCard from '@/components/dashboard/StatusCard';
-import VulnerabilityChart from '@/components/dashboard/VulnerabilityChart';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import FixedVulnerabilityChart from '@/components/dashboard/FixedVulnerabilityChart';
 import ServiceMonitor from '@/components/dashboard/ServiceMonitor';
 import AlertHistory from '@/components/dashboard/AlertHistory';
 import { 
@@ -145,7 +146,9 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Vulnerability analysis chart */}
             <div className="lg:col-span-2">
-              <VulnerabilityChart />
+              <ErrorBoundary componentName="Vulnerability Chart">
+                <FixedVulnerabilityChart />
+              </ErrorBoundary>
             </div>
             
             {/* Quick actions */}
@@ -215,10 +218,14 @@ const Index = () => {
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             {/* Service monitoring */}
-            <ServiceMonitor />
+            <ErrorBoundary componentName="Service Monitor">
+              <ServiceMonitor />
+            </ErrorBoundary>
             
             {/* Alert history */}
-            <AlertHistory />
+            <ErrorBoundary componentName="Alert History">
+              <AlertHistory />
+            </ErrorBoundary>
           </div>
         </main>
       </div>

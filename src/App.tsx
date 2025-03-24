@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,16 +24,56 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/scans" element={<Index />} />
-          <Route path="/services" element={<Index />} />
-          <Route path="/assets" element={<Index />} />
-          <Route path="/alerts" element={<Index />} />
-          <Route path="/monitoring" element={<Index />} />
-          <Route path="/security" element={<Index />} />
-          <Route path="/connections" element={<Index />} />
-          <Route path="/notifications" element={<Index />} />
-          <Route path="/settings" element={<Index />} />
+          <Route path="/" element={
+            <ErrorBoundary componentName="Dashboard">
+              <Index />
+            </ErrorBoundary>
+          } />
+          <Route path="/scans" element={
+            <ErrorBoundary componentName="Scans">
+              <Index />
+            </ErrorBoundary>
+          } />
+          <Route path="/services" element={
+            <ErrorBoundary componentName="Services">
+              <Index />
+            </ErrorBoundary>
+          } />
+          <Route path="/assets" element={
+            <ErrorBoundary componentName="Assets">
+              <Index />
+            </ErrorBoundary>
+          } />
+          <Route path="/alerts" element={
+            <ErrorBoundary componentName="Alerts">
+              <Index />
+            </ErrorBoundary>
+          } />
+          <Route path="/monitoring" element={
+            <ErrorBoundary componentName="Monitoring">
+              <Index />
+            </ErrorBoundary>
+          } />
+          <Route path="/security" element={
+            <ErrorBoundary componentName="Security">
+              <Index />
+            </ErrorBoundary>
+          } />
+          <Route path="/connections" element={
+            <ErrorBoundary componentName="Connections">
+              <Index />
+            </ErrorBoundary>
+          } />
+          <Route path="/notifications" element={
+            <ErrorBoundary componentName="Notifications">
+              <Index />
+            </ErrorBoundary>
+          } />
+          <Route path="/settings" element={
+            <ErrorBoundary componentName="Settings">
+              <Index />
+            </ErrorBoundary>
+          } />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
