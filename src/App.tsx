@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,6 +8,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Settings from "./pages/Settings";
+import Scans from "./pages/Scans";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,7 +33,7 @@ const App = () => (
           } />
           <Route path="/scans" element={
             <ErrorBoundary componentName="Scans">
-              <Index />
+              <Scans />
             </ErrorBoundary>
           } />
           <Route path="/services" element={
