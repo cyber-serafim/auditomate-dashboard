@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Settings from "./pages/Settings";
 import Scans from "./pages/Scans";
+import Services from "./pages/Services";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,7 +39,7 @@ const App = () => (
           } />
           <Route path="/services" element={
             <ErrorBoundary componentName="Services">
-              <Index />
+              <Services />
             </ErrorBoundary>
           } />
           <Route path="/assets" element={
