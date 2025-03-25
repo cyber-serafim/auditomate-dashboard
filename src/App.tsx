@@ -10,6 +10,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import Settings from "./pages/Settings";
 import Scans from "./pages/Scans";
 import Services from "./pages/Services";
+import Assets from "./pages/Assets";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,7 +45,7 @@ const App = () => (
           } />
           <Route path="/assets" element={
             <ErrorBoundary componentName="Assets">
-              <Index />
+              <Assets />
             </ErrorBoundary>
           } />
           <Route path="/alerts" element={
