@@ -1,12 +1,18 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, AlertTriangle, Shield, CheckCircle, XCircle, Calendar, Clock } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import StartScanDialog from '@/components/scans/StartScanDialog';
+import ScanProgressDialog from '@/components/scans/ScanProgressDialog';
+import ScanResultDialog from '@/components/scans/ScanResultDialog';
+import { useToast } from '@/hooks/use-toast';
+import { useLocation } from 'react-router-dom';
 
-const scansData = [
+// Initial scan data
+const initialScansData = [
   {
     id: 1,
     name: "Повне сканування системи",
@@ -96,7 +102,21 @@ const ScanStatusBadge = ({ status }: { status: string }) => {
   }
 };
 
-const ScanSummary = () => {
+const ScanSummary = ({ scansData }: { scansData: any[] }) => {
+  // Calculate totals from all completed scans
+  const totals = scansData
+    .filter(scan => scan.status === "completed")
+    .reduce(
+      (acc, scan) => {
+        acc.critical += scan.critical;
+        acc.high += scan.high;
+        acc.medium += scan.medium;
+        acc.low += scan.low;
+        return acc;
+      },
+      { critical: 0, high: 0, medium: 0, low: 0 }
+    );
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
       <Card>
@@ -105,7 +125,7 @@ const ScanSummary = () => {
             <AlertTriangle className="h-6 w-6 text-red-500" />
           </div>
           <p className="text-sm font-medium">Критичні вразливості</p>
-          <p className="text-3xl font-bold mt-1">7</p>
+          <p className="text-3xl font-bold mt-1">{totals.critical}</p>
         </CardContent>
       </Card>
       
@@ -115,7 +135,7 @@ const ScanSummary = () => {
             <AlertTriangle className="h-6 w-6 text-orange-500" />
           </div>
           <p className="text-sm font-medium">Високий ризик</p>
-          <p className="text-3xl font-bold mt-1">15</p>
+          <p className="text-3xl font-bold mt-1">{totals.high}</p>
         </CardContent>
       </Card>
       
@@ -125,7 +145,7 @@ const ScanSummary = () => {
             <AlertTriangle className="h-6 w-6 text-yellow-500" />
           </div>
           <p className="text-sm font-medium">Середній ризик</p>
-          <p className="text-3xl font-bold mt-1">28</p>
+          <p className="text-3xl font-bold mt-1">{totals.medium}</p>
         </CardContent>
       </Card>
       
@@ -135,7 +155,7 @@ const ScanSummary = () => {
             <Shield className="h-6 w-6 text-green-500" />
           </div>
           <p className="text-sm font-medium">Низький ризик</p>
-          <p className="text-3xl font-bold mt-1">54</p>
+          <p className="text-3xl font-bold mt-1">{totals.low}</p>
         </CardContent>
       </Card>
     </div>
@@ -143,11 +163,166 @@ const ScanSummary = () => {
 };
 
 const Scans = () => {
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
+  const [scansData, setScansData] = useState(initialScansData);
+  const [startScanDialogOpen, setStartScanDialogOpen] = useState(false);
+  const [scanProgressDialogOpen, setScanProgressDialogOpen] = useState(false);
+  const [scanResultDialogOpen, setScanResultDialogOpen] = useState(false);
+  const [currentScanConfig, setCurrentScanConfig] = useState<any>(null);
+  const [currentScanResult, setCurrentScanResult] = useState<any>(null);
+  const { toast } = useToast();
+  
+  // Check if we need to open the scan dialog (coming from dashboard)
+  useEffect(() => {
+    if (location.state?.openScanDialog) {
+      setStartScanDialogOpen(true);
+      // Clear the state so refreshing doesn't reopen the dialog
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
   
   const filteredScans = scansData.filter(scan => 
     scan.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  
+  const handleStartScan = (values: any) => {
+    setCurrentScanConfig({
+      name: values.name,
+      target: values.target,
+      scanType: values.scanType,
+      targetType: values.targetType
+    });
+    setScanProgressDialogOpen(true);
+    
+    // Add the scan in progress to the list
+    const newScan = {
+      id: Date.now(),
+      name: values.name,
+      date: new Date().toLocaleDateString('uk-UA'),
+      time: new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' }),
+      status: "in-progress",
+      critical: 0,
+      high: 0,
+      medium: 0,
+      low: 0,
+    };
+    
+    setScansData(prev => [newScan, ...prev]);
+  };
+  
+  const handleScanComplete = (results: any) => {
+    // Update the scan in the list with the results
+    setScansData(prev => 
+      prev.map(scan => 
+        scan.status === "in-progress" 
+          ? { 
+              ...scan, 
+              status: "completed", 
+              critical: results.critical,
+              high: results.high,
+              medium: results.medium,
+              low: results.low
+            } 
+          : scan
+      )
+    );
+    
+    setCurrentScanResult(results);
+    
+    // Wait briefly before showing the results dialog
+    setTimeout(() => {
+      setScanProgressDialogOpen(false);
+      setScanResultDialogOpen(true);
+    }, 1000);
+  };
+  
+  const handleShowDetails = (scanId: number) => {
+    const scan = scansData.find(s => s.id === scanId);
+    
+    if (scan.status === "completed") {
+      // Generate mock vulnerabilities for the selected scan
+      const mockVulnerabilities = [];
+      
+      for (let i = 0; i < scan.critical; i++) {
+        mockVulnerabilities.push({
+          id: `VULN-${Math.floor(Math.random() * 10000)}`,
+          name: getRandomVulnerabilityName(),
+          description: 'Детальний опис вразливості та її потенційних наслідків',
+          level: 'critical',
+          location: 'Server',
+          recommendations: 'Рекомендації щодо усунення вразливості'
+        });
+      }
+      
+      for (let i = 0; i < scan.high; i++) {
+        mockVulnerabilities.push({
+          id: `VULN-${Math.floor(Math.random() * 10000)}`,
+          name: getRandomVulnerabilityName(),
+          description: 'Детальний опис вразливості та її потенційних наслідків',
+          level: 'high',
+          location: 'Server',
+          recommendations: 'Рекомендації щодо усунення вразливості'
+        });
+      }
+      
+      for (let i = 0; i < scan.medium; i++) {
+        mockVulnerabilities.push({
+          id: `VULN-${Math.floor(Math.random() * 10000)}`,
+          name: getRandomVulnerabilityName(),
+          description: 'Детальний опис вразливості та її потенційних наслідків',
+          level: 'medium',
+          location: 'Server',
+          recommendations: 'Рекомендації щодо усунення вразливості'
+        });
+      }
+      
+      for (let i = 0; i < scan.low; i++) {
+        mockVulnerabilities.push({
+          id: `VULN-${Math.floor(Math.random() * 10000)}`,
+          name: getRandomVulnerabilityName(),
+          description: 'Детальний опис вразливості та її потенційних наслідків',
+          level: 'low',
+          location: 'Server',
+          recommendations: 'Рекомендації щодо усунення вразливості'
+        });
+      }
+      
+      setCurrentScanResult({
+        ...scan,
+        vulnerabilities: mockVulnerabilities
+      });
+      
+      setScanResultDialogOpen(true);
+    } else if (scan.status === "scheduled") {
+      toast({
+        title: "Заплановане сканування",
+        description: "Це сканування ще не було запущено",
+      });
+    }
+  };
+  
+  const getRandomVulnerabilityName = () => {
+    const vulnNames = [
+      'SQL Injection', 
+      'Cross-Site Scripting (XSS)', 
+      'Outdated SSL Certificate', 
+      'Insecure Direct Object References',
+      'Security Misconfiguration',
+      'Missing Authentication',
+      'Cross-Site Request Forgery (CSRF)',
+      'Using Components with Known Vulnerabilities',
+      'Sensitive Data Exposure',
+      'Insufficient Logging & Monitoring',
+      'Broken Access Control',
+      'Buffer Overflow',
+      'Unpatched Software',
+      'Default Credentials',
+      'Directory Traversal'
+    ];
+    
+    return vulnNames[Math.floor(Math.random() * vulnNames.length)];
+  };
 
   return (
     <div className="container py-6 space-y-6">
@@ -158,7 +333,7 @@ const Scans = () => {
         </p>
       </div>
       
-      <ScanSummary />
+      <ScanSummary scansData={scansData} />
       
       <div className="flex flex-col md:flex-row justify-between gap-4 mb-4">
         <div className="relative w-full md:w-72">
@@ -170,7 +345,10 @@ const Scans = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Button className="w-full md:w-auto">
+        <Button 
+          className="w-full md:w-auto"
+          onClick={() => setStartScanDialogOpen(true)}
+        >
           <Search className="mr-2 h-4 w-4" />
           Запустити нове сканування
         </Button>
@@ -234,7 +412,13 @@ const Scans = () => {
                     ) : '-'}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="sm">Деталі</Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleShowDetails(scan.id)}
+                    >
+                      Деталі
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -242,6 +426,29 @@ const Scans = () => {
           </Table>
         </CardContent>
       </Card>
+      
+      {/* Dialogs */}
+      <StartScanDialog 
+        open={startScanDialogOpen} 
+        onOpenChange={setStartScanDialogOpen}
+        onStartScan={handleStartScan}
+      />
+      
+      {currentScanConfig && (
+        <ScanProgressDialog
+          open={scanProgressDialogOpen}
+          onOpenChange={setScanProgressDialogOpen}
+          scanName={currentScanConfig.name}
+          scanTarget={currentScanConfig.target}
+          onScanComplete={handleScanComplete}
+        />
+      )}
+      
+      <ScanResultDialog
+        open={scanResultDialogOpen}
+        onOpenChange={setScanResultDialogOpen}
+        result={currentScanResult}
+      />
     </div>
   );
 };
