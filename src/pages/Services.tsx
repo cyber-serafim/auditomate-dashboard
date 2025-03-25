@@ -9,9 +9,11 @@ import { Input } from "@/components/ui/input";
 import ServiceMonitor from '@/components/dashboard/ServiceMonitor';
 import { AlertTriangle, CheckCircle, Clock, Plus, Search, ServerCrash, XCircle } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import AddServiceDialog from '@/components/services/AddServiceDialog';
+import { toast } from "sonner";
 
 // Sample services data
-const servicesData = [
+const initialServicesData = [
   { id: '1', name: 'Веб-сервер', status: 'online', uptime: '99.9%', lastChecked: '2 хвилини тому', type: 'web', description: 'Основний веб-сервер для обслуговування HTTP запитів' },
   { id: '2', name: 'База даних', status: 'online', uptime: '99.8%', lastChecked: '5 хвилин тому', type: 'database', description: 'Сервер PostgreSQL для зберігання даних' },
   { id: '3', name: 'Сервіс автентифікації', status: 'warning', uptime: '98.5%', lastChecked: '1 хвилина тому', type: 'auth', description: 'Служба управління ідентифікацією користувачів' },
@@ -40,7 +42,15 @@ const statusText = {
   maintenance: "Обслуговування"
 };
 
-const ServiceHealth = () => {
+const ServiceHealth = ({ services }) => {
+  // Count services by status
+  const statusCounts = {
+    online: services.filter(service => service.status === 'online').length,
+    warning: services.filter(service => service.status === 'warning').length,
+    offline: services.filter(service => service.status === 'offline').length,
+    maintenance: services.filter(service => service.status === 'maintenance').length,
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
       <Card>
@@ -49,7 +59,7 @@ const ServiceHealth = () => {
             <CheckCircle className="h-6 w-6 text-green-500" />
           </div>
           <p className="text-sm font-medium">Працюють</p>
-          <p className="text-3xl font-bold mt-1">7</p>
+          <p className="text-3xl font-bold mt-1">{statusCounts.online}</p>
         </CardContent>
       </Card>
       
@@ -59,7 +69,7 @@ const ServiceHealth = () => {
             <AlertTriangle className="h-6 w-6 text-yellow-500" />
           </div>
           <p className="text-sm font-medium">Попередження</p>
-          <p className="text-3xl font-bold mt-1">1</p>
+          <p className="text-3xl font-bold mt-1">{statusCounts.warning}</p>
         </CardContent>
       </Card>
       
@@ -69,7 +79,7 @@ const ServiceHealth = () => {
             <XCircle className="h-6 w-6 text-red-500" />
           </div>
           <p className="text-sm font-medium">Не працюють</p>
-          <p className="text-3xl font-bold mt-1">1</p>
+          <p className="text-3xl font-bold mt-1">{statusCounts.offline}</p>
         </CardContent>
       </Card>
       
@@ -79,7 +89,7 @@ const ServiceHealth = () => {
             <Clock className="h-6 w-6 text-blue-500" />
           </div>
           <p className="text-sm font-medium">Обслуговування</p>
-          <p className="text-3xl font-bold mt-1">1</p>
+          <p className="text-3xl font-bold mt-1">{statusCounts.maintenance}</p>
         </CardContent>
       </Card>
     </div>
@@ -89,11 +99,32 @@ const ServiceHealth = () => {
 const Services = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('list');
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [servicesData, setServicesData] = useState(initialServicesData);
   
   const filteredServices = servicesData.filter(service => 
     service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     service.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Function to handle adding a new service
+  const handleAddService = (values) => {
+    const newService = {
+      id: (servicesData.length + 1).toString(),
+      name: values.name,
+      status: 'online',
+      uptime: '100%',
+      lastChecked: 'щойно',
+      type: values.type,
+      description: values.description
+    };
+    
+    setServicesData([...servicesData, newService]);
+    setShowAddDialog(false);
+    toast.success("Сервіс успішно додано", {
+      description: `Сервіс "${values.name}" додано до системи моніторингу.`
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -110,7 +141,7 @@ const Services = () => {
             </p>
           </div>
           
-          <ServiceHealth />
+          <ServiceHealth services={servicesData} />
           
           <div className="flex flex-col md:flex-row justify-between gap-4 mb-4">
             <div className="relative w-full md:w-72">
@@ -122,7 +153,10 @@ const Services = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button className="w-full md:w-auto">
+            <Button 
+              className="w-full md:w-auto"
+              onClick={() => setShowAddDialog(true)}
+            >
               <Plus className="mr-2 h-4 w-4" />
               Додати новий сервіс
             </Button>
@@ -182,6 +216,13 @@ const Services = () => {
           </Tabs>
         </main>
       </div>
+      
+      {/* Add Service Dialog */}
+      <AddServiceDialog 
+        open={showAddDialog} 
+        onOpenChange={setShowAddDialog}
+        onSubmit={handleAddService}
+      />
     </div>
   );
 };
