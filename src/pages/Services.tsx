@@ -1,7 +1,4 @@
-
 import React, { useState } from 'react';
-import Header from '@/components/layout/Header';
-import Sidebar from '@/components/layout/Sidebar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -127,95 +124,89 @@ const Services = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
-      <Sidebar />
-      
-      <div className="flex-1 ml-64">
-        <Header />
+    <div className="min-h-screen bg-background">
+      <main className="container py-6 space-y-6">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-2xl font-semibold tracking-tight">Сервіси</h1>
+          <p className="text-sm text-muted-foreground">
+            Моніторинг та управління сервісами інфраструктури.
+          </p>
+        </div>
         
-        <main className="container py-6 space-y-6">
-          <div className="flex flex-col gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight">Сервіси</h1>
-            <p className="text-sm text-muted-foreground">
-              Моніторинг та управління сервісами інфраструктури.
-            </p>
+        <ServiceHealth services={servicesData} />
+        
+        <div className="flex flex-col md:flex-row justify-between gap-4 mb-4">
+          <div className="relative w-full md:w-72">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              className="pl-9"
+              placeholder="Пошук сервісів"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
+          <Button 
+            className="w-full md:w-auto"
+            onClick={() => setShowAddDialog(true)}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Додати новий сервіс
+          </Button>
+        </div>
+        
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-4">
+            <TabsTrigger value="list">Список</TabsTrigger>
+            <TabsTrigger value="monitor">Монітор</TabsTrigger>
+          </TabsList>
           
-          <ServiceHealth services={servicesData} />
-          
-          <div className="flex flex-col md:flex-row justify-between gap-4 mb-4">
-            <div className="relative w-full md:w-72">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                className="pl-9"
-                placeholder="Пошук сервісів"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <Button 
-              className="w-full md:w-auto"
-              onClick={() => setShowAddDialog(true)}
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Додати новий сервіс
-            </Button>
-          </div>
-          
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-4">
-              <TabsTrigger value="list">Список</TabsTrigger>
-              <TabsTrigger value="monitor">Монітор</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="list">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-xl">Список сервісів</CardTitle>
-                  <CardDescription>Огляд всіх сервісів та їх статусу.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Назва</TableHead>
-                        <TableHead>Опис</TableHead>
-                        <TableHead>Статус</TableHead>
-                        <TableHead>Час роботи</TableHead>
-                        <TableHead>Остання перевірка</TableHead>
-                        <TableHead className="text-right">Дії</TableHead>
+          <TabsContent value="list">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-xl">Список сервісів</CardTitle>
+                <CardDescription>Огляд всіх сервісів та їх статусу.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Назва</TableHead>
+                      <TableHead>Опис</TableHead>
+                      <TableHead>Статус</TableHead>
+                      <TableHead>Час роботи</TableHead>
+                      <TableHead>Остання перевірка</TableHead>
+                      <TableHead className="text-right">Дії</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredServices.map((service) => (
+                      <TableRow key={service.id}>
+                        <TableCell className="font-medium">{service.name}</TableCell>
+                        <TableCell>{service.description}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            {statusIcons[service.status]}
+                            <span className="text-sm">{statusText[service.status]}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>{service.uptime}</TableCell>
+                        <TableCell>{service.lastChecked}</TableCell>
+                        <TableCell className="text-right">
+                          <Button variant="ghost" size="sm">Деталі</Button>
+                        </TableCell>
                       </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredServices.map((service) => (
-                        <TableRow key={service.id}>
-                          <TableCell className="font-medium">{service.name}</TableCell>
-                          <TableCell>{service.description}</TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-1">
-                              {statusIcons[service.status]}
-                              <span className="text-sm">{statusText[service.status]}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>{service.uptime}</TableCell>
-                          <TableCell>{service.lastChecked}</TableCell>
-                          <TableCell className="text-right">
-                            <Button variant="ghost" size="sm">Деталі</Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="monitor">
-              <ServiceMonitor />
-            </TabsContent>
-          </Tabs>
-        </main>
-      </div>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="monitor">
+            <ServiceMonitor />
+          </TabsContent>
+        </Tabs>
+      </main>
       
       {/* Add Service Dialog */}
       <AddServiceDialog 
