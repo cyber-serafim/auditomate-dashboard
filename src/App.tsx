@@ -11,6 +11,11 @@ import Settings from "./pages/Settings";
 import Scans from "./pages/Scans";
 import Services from "./pages/Services";
 import Assets from "./pages/Assets";
+import Alerts from "./pages/Alerts";
+import Monitoring from "./pages/Monitoring";
+import Security from "./pages/Security";
+import Connections from "./pages/Connections";
+import Notifications from "./pages/Notifications";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -50,27 +55,27 @@ const App = () => (
           } />
           <Route path="/alerts" element={
             <ErrorBoundary componentName="Alerts">
-              <Index />
+              <Alerts />
             </ErrorBoundary>
           } />
           <Route path="/monitoring" element={
             <ErrorBoundary componentName="Monitoring">
-              <Index />
+              <Monitoring />
             </ErrorBoundary>
           } />
           <Route path="/security" element={
             <ErrorBoundary componentName="Security">
-              <Index />
+              <Security />
             </ErrorBoundary>
           } />
           <Route path="/connections" element={
             <ErrorBoundary componentName="Connections">
-              <Index />
+              <Connections />
             </ErrorBoundary>
           } />
           <Route path="/notifications" element={
             <ErrorBoundary componentName="Notifications">
-              <Index />
+              <Notifications />
             </ErrorBoundary>
           } />
           <Route path="/settings" element={
