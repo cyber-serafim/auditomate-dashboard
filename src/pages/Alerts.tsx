@@ -1,5 +1,5 @@
+
 import React from 'react';
-import { Separator } from '@/components/ui/separator';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -82,264 +82,278 @@ const getStatusBadge = (status: string) => {
 
 const AlertsPage = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <main className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Alerts</h1>
-            <p className="text-muted-foreground">Monitor and manage system alerts</p>
-          </div>
-          
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="gap-1">
-              <Bell className="h-4 w-4" />
-              Configure Notifications
-            </Button>
-            <Button variant="outline" size="sm" className="gap-1">
-              <Settings className="h-4 w-4" />
-              Alert Settings
-            </Button>
-          </div>
+    <div className="grid gap-4">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Alerts</h1>
+          <p className="text-muted-foreground">Monitor and manage system alerts</p>
         </div>
         
-        <div className="grid grid-cols-4 gap-4 mb-6">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total Alerts</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">24</div>
-              <p className="text-xs text-muted-foreground">Last 24 hours</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Critical</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-destructive">2</div>
-              <p className="text-xs text-muted-foreground">Require immediate action</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Active</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-amber-500">7</div>
-              <p className="text-xs text-muted-foreground">Pending resolution</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Resolved</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-500">15</div>
-              <p className="text-xs text-muted-foreground">Successfully addressed</p>
-            </CardContent>
-          </Card>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" className="gap-1">
+            <Bell className="h-4 w-4" />
+            Configure Notifications
+          </Button>
+          <Button variant="outline" size="sm" className="gap-1">
+            <Settings className="h-4 w-4" />
+            Alert Settings
+          </Button>
         </div>
-        
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Recent Alerts</CardTitle>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Total Alerts</CardTitle>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="all">
-              <TabsList>
-                <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="active">Active</TabsTrigger>
-                <TabsTrigger value="acknowledged">Acknowledged</TabsTrigger>
-                <TabsTrigger value="resolved">Resolved</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="all" className="mt-4">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Severity</TableHead>
-                      <TableHead>Alert</TableHead>
-                      <TableHead>Source</TableHead>
-                      <TableHead>Time</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {alertData.map((alert) => (
-                      <TableRow key={alert.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            {getSeverityIcon(alert.severity)}
-                            <span className="capitalize">{alert.severity}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="font-medium">{alert.title}</TableCell>
-                        <TableCell>{alert.source}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-muted-foreground" />
-                            {alert.timestamp}
-                          </div>
-                        </TableCell>
-                        <TableCell>{getStatusBadge(alert.status)}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button variant="ghost" size="sm">
-                              Details
-                            </Button>
-                            {alert.status === 'active' && (
-                              <>
-                                <Button variant="outline" size="sm">
-                                  Acknowledge
-                                </Button>
-                                <Button variant="default" size="sm">
-                                  Resolve
-                                </Button>
-                              </>
-                            )}
-                            {alert.status === 'acknowledged' && (
+            <div className="text-2xl font-bold">24</div>
+            <p className="text-xs text-muted-foreground">Last 24 hours</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Critical</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-destructive">2</div>
+            <p className="text-xs text-muted-foreground">Require immediate action</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Active</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-amber-500">7</div>
+            <p className="text-xs text-muted-foreground">Pending resolution</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Resolved</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-500">15</div>
+            <p className="text-xs text-muted-foreground">Successfully addressed</p>
+          </CardContent>
+        </Card>
+      </div>
+      
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Recent Alerts</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="all">
+            <TabsList>
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="active">Active</TabsTrigger>
+              <TabsTrigger value="acknowledged">Acknowledged</TabsTrigger>
+              <TabsTrigger value="resolved">Resolved</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="all" className="mt-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Severity</TableHead>
+                    <TableHead>Alert</TableHead>
+                    <TableHead>Source</TableHead>
+                    <TableHead>Time</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {alertData.map((alert) => (
+                    <TableRow key={alert.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {getSeverityIcon(alert.severity)}
+                          <span className="capitalize">{alert.severity}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">{alert.title}</TableCell>
+                      <TableCell>{alert.source}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          {alert.timestamp}
+                        </div>
+                      </TableCell>
+                      <TableCell>{getStatusBadge(alert.status)}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button variant="ghost" size="sm">
+                            Details
+                          </Button>
+                          {alert.status === 'active' && (
+                            <>
+                              <Button variant="outline" size="sm">
+                                Acknowledge
+                              </Button>
                               <Button variant="default" size="sm">
                                 Resolve
                               </Button>
-                            )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TabsContent>
-              
-              <TabsContent value="active" className="mt-4">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Severity</TableHead>
-                      <TableHead>Alert</TableHead>
-                      <TableHead>Source</TableHead>
-                      <TableHead>Time</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {alertData.filter(alert => alert.status === 'active').map((alert) => (
-                      <TableRow key={alert.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            {getSeverityIcon(alert.severity)}
-                            <span className="capitalize">{alert.severity}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="font-medium">{alert.title}</TableCell>
-                        <TableCell>{alert.source}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-muted-foreground" />
-                            {alert.timestamp}
-                          </div>
-                        </TableCell>
-                        <TableCell>{getStatusBadge(alert.status)}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button variant="ghost" size="sm">
-                              Details
-                            </Button>
-                            <Button variant="outline" size="sm">
-                              Acknowledge
-                            </Button>
+                            </>
+                          )}
+                          {alert.status === 'acknowledged' && (
                             <Button variant="default" size="sm">
                               Resolve
                             </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TabsContent>
-              
-              <TabsContent value="acknowledged" className="mt-4">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Severity</TableHead>
-                      <TableHead>Alert</TableHead>
-                      <TableHead>Source</TableHead>
-                      <TableHead>Time</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                          )}
+                        </div>
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {alertData.filter(alert => alert.status === 'acknowledged').map((alert) => (
-                      <TableRow key={alert.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            {getSeverityIcon(alert.severity)}
-                            <span className="capitalize">{alert.severity}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="font-medium">{alert.title}</TableCell>
-                        <TableCell>{alert.source}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-muted-foreground" />
-                            {alert.timestamp}
-                          </div>
-                        </TableCell>
-                        <TableCell>{getStatusBadge(alert.status)}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button variant="ghost" size="sm">
-                              Details
-                            </Button>
-                            <Button variant="default" size="sm">
-                              Resolve
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TabsContent>
-              
-              <TabsContent value="resolved" className="mt-4">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Severity</TableHead>
-                      <TableHead>Alert</TableHead>
-                      <TableHead>Source</TableHead>
-                      <TableHead>Time</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                  ))}
+                </TableBody>
+              </Table>
+            </TabsContent>
+            
+            <TabsContent value="active" className="mt-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Severity</TableHead>
+                    <TableHead>Alert</TableHead>
+                    <TableHead>Source</TableHead>
+                    <TableHead>Time</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {alertData.filter(alert => alert.status === 'active').map((alert) => (
+                    <TableRow key={alert.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {getSeverityIcon(alert.severity)}
+                          <span className="capitalize">{alert.severity}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">{alert.title}</TableCell>
+                      <TableCell>{alert.source}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          {alert.timestamp}
+                        </div>
+                      </TableCell>
+                      <TableCell>{getStatusBadge(alert.status)}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button variant="ghost" size="sm">
+                            Details
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            Acknowledge
+                          </Button>
+                          <Button variant="default" size="sm">
+                            Resolve
+                          </Button>
+                        </div>
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {alertData.filter(alert => alert.status === 'resolved').map((alert) => (
-                      <TableRow key={alert.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            {getSeverityIcon(alert.severity)}
-                            <span className="capitalize">{alert.severity}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="font-medium">{alert.title}</TableCell>
-                        <TableCell>{alert.source}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-muted-foreground" />
-                            {alert.timestamp}
-                          </div>
-                        </TableCell>
-                        <TableCell>{getStatusBadge(alert.status)}</TableCell>
-                        <TableCell className="text-right">
-                          <Button
+                  ))}
+                </TableBody>
+              </Table>
+            </TabsContent>
+            
+            <TabsContent value="acknowledged" className="mt-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Severity</TableHead>
+                    <TableHead>Alert</TableHead>
+                    <TableHead>Source</TableHead>
+                    <TableHead>Time</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {alertData.filter(alert => alert.status === 'acknowledged').map((alert) => (
+                    <TableRow key={alert.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {getSeverityIcon(alert.severity)}
+                          <span className="capitalize">{alert.severity}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">{alert.title}</TableCell>
+                      <TableCell>{alert.source}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          {alert.timestamp}
+                        </div>
+                      </TableCell>
+                      <TableCell>{getStatusBadge(alert.status)}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button variant="ghost" size="sm">
+                            Details
+                          </Button>
+                          <Button variant="default" size="sm">
+                            Resolve
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TabsContent>
+            
+            <TabsContent value="resolved" className="mt-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Severity</TableHead>
+                    <TableHead>Alert</TableHead>
+                    <TableHead>Source</TableHead>
+                    <TableHead>Time</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {alertData.filter(alert => alert.status === 'resolved').map((alert) => (
+                    <TableRow key={alert.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {getSeverityIcon(alert.severity)}
+                          <span className="capitalize">{alert.severity}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">{alert.title}</TableCell>
+                      <TableCell>{alert.source}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          {alert.timestamp}
+                        </div>
+                      </TableCell>
+                      <TableCell>{getStatusBadge(alert.status)}</TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="sm">
+                          Details
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
 
+export default AlertsPage;
