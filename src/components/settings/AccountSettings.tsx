@@ -1,54 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth, User, AccessLevel } from '@/contexts/AuthContext';
+import { useDb } from '@/contexts/DbContext';
 import { Button } from '@/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/components/ui/table';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
-import { UserPlus, Pencil, Trash2, Shield } from 'lucide-react';
+import { Pen, Trash2, UserPlus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { useForm } from 'react-hook-form';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const userFormSchema = z.object({
   username: z.string().min(3, { message: 'Ім\'я користувача має бути не менше 3 символів' }),
@@ -75,11 +40,11 @@ const pages = [
 ];
 
 export const AccountSettings = () => {
-  const { users, addUser, updateUser, deleteUser } = useAuth();
+  const { user, users, addUser, updateUser, deleteUser } = useAuth();
+  const { saveUser, updateUserData, removeUser } = useDb();
   const { toast } = useToast();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const form = useForm<UserFormValues>({
@@ -109,46 +74,63 @@ export const AccountSettings = () => {
     });
   };
 
-  const createUser = (userData: Omit<User, "id">) => {
+  const createUser = async (userData: Omit<User, "id">) => {
     if (!userData.role) {
       userData.role = "user"; // Default role if none provided
     }
+    
     addUser(userData);
-    toast({
-      title: "Користувача додано",
-      description: `Користувача ${userData.name} успішно додано до системи.`,
-    });
-    setIsAddDialogOpen(false);
-    resetForm();
+    
+    const savedUser = await saveUser(userData);
+    
+    if (savedUser) {
+      toast({
+        title: "Користувача додано",
+        description: `Користувача ${userData.name} успішно додано до системи.`,
+      });
+      setIsAddDialogOpen(false);
+      resetForm();
+    }
   };
 
   const handleAddUser = (data: UserFormValues) => {
     createUser(data);
   };
 
-  const handleEditUser = (data: UserFormValues) => {
+  const handleEditUser = async (data: UserFormValues) => {
     if (selectedUser) {
-      const updatedUser = { ...selectedUser, ...data };
+      const updatedUser = {
+        ...selectedUser,
+        ...data
+      };
+      
       updateUser(updatedUser);
-      toast({
-        title: "Користувача оновлено",
-        description: `Дані користувача ${data.name} успішно оновлено.`,
-      });
-      setIsEditDialogOpen(false);
-      setSelectedUser(null);
+      
+      const success = await updateUserData(updatedUser);
+      
+      if (success) {
+        toast({
+          title: "Користувача оновлено",
+          description: `Дані користувача ${data.name} успішно оновлено.`,
+        });
+        setIsEditDialogOpen(false);
+        setSelectedUser(null);
+      }
     }
   };
 
-  const handleDeleteUser = () => {
-    if (selectedUser) {
-      deleteUser(selectedUser.id);
-      toast({
-        title: "Користувача видалено",
-        description: `Користувача ${selectedUser.name} було видалено з системи.`,
-        variant: "destructive",
-      });
-      setIsDeleteDialogOpen(false);
-      setSelectedUser(null);
+  const handleDeleteUser = async (id: string) => {
+    if (window.confirm("Ви впевнені, що хочете видалити цього користувача?")) {
+      deleteUser(id);
+      
+      const success = await removeUser(id);
+      
+      if (success) {
+        toast({
+          title: "Користувача видалено",
+          description: "Користувача успішно видалено з системи.",
+        });
+      }
     }
   };
 
@@ -378,7 +360,6 @@ export const AccountSettings = () => {
         </CardContent>
       </Card>
 
-      {/* Діалог редагування користувача */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -508,7 +489,6 @@ export const AccountSettings = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Діалог видалення користувача */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>

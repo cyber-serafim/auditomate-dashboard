@@ -1,11 +1,33 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { AccountSettings } from '@/components/settings/AccountSettings';
 import { useAuth } from '@/contexts/AuthContext';
+import { useDb } from '@/contexts/DbContext';
 import { Navigate } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
 
 const Account = () => {
   const { isAuthenticated, hasAccess } = useAuth();
+  const { fetchUsers } = useDb();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadUsers = async () => {
+      try {
+        await fetchUsers();
+      } catch (error) {
+        console.error("Помилка при завантаженні користувачів:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (isAuthenticated) {
+      loadUsers();
+    } else {
+      setIsLoading(false);
+    }
+  }, [isAuthenticated, fetchUsers]);
 
   // Verify the user has manage access to the account settings
   if (!isAuthenticated || !hasAccess('settings', 'manage')) {
@@ -20,7 +42,14 @@ const Account = () => {
           Створення та редагування користувачів, налаштування прав доступу.
         </p>
       </div>
-      <AccountSettings />
+      
+      {isLoading ? (
+        <div className="flex justify-center items-center h-40">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : (
+        <AccountSettings />
+      )}
     </div>
   );
 };
