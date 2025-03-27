@@ -1,9 +1,8 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// Для простоти використовуємо значення напряму, але в реальному проекті 
-// краще використовувати змінні середовища
-const supabaseUrl = 'YOUR_SUPABASE_URL'; // Замініть на URL вашого проекту
-const supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY'; // Замініть на ваш публічний ключ
+// URL та ключ доступу до вашого власного Supabase
+const supabaseUrl = 'http://your-server-ip:8000'; // Замініть на IP вашого сервера
+const supabaseAnonKey = 'your-anon-key'; // Замініть на ваш публічний ключ
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
