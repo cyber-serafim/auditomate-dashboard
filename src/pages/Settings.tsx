@@ -4,8 +4,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScanSettings } from '@/components/settings/ScanSettings';
 import { NotificationSettings } from '@/components/settings/NotificationSettings';
 import { ApiSettings } from '@/components/settings/ApiSettings';
+import { AccountSettings } from '@/components/settings/AccountSettings';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { UserCog } from 'lucide-react';
 
 const Settings = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <div className="container py-6 space-y-6">
       <div className="flex flex-col gap-2">
@@ -13,6 +20,17 @@ const Settings = () => {
         <p className="text-sm text-muted-foreground">
           Налаштуйте параметри сканування безпеки, сповіщення та API ключі.
         </p>
+      </div>
+
+      <div className="flex justify-end mb-4">
+        <Button 
+          variant="outline" 
+          onClick={() => navigate('/settings/account')}
+          className="gap-2"
+        >
+          <UserCog className="h-4 w-4" />
+          Керування користувачами
+        </Button>
       </div>
 
       <Tabs defaultValue="scan">

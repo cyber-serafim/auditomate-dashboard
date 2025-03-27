@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   Activity, 
   AlertTriangle, 
@@ -19,6 +19,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useAuth } from '@/contexts/AuthContext';
 
 type NavItemProps = {
   icon: React.ElementType;
@@ -26,6 +27,7 @@ type NavItemProps = {
   isActive?: boolean;
   collapsed?: boolean;
   to: string;
+  pageName: string;
 };
 
 const NavItem: React.FC<NavItemProps> = ({ 
@@ -33,8 +35,14 @@ const NavItem: React.FC<NavItemProps> = ({
   label, 
   isActive = false, 
   collapsed = false,
-  to
+  to,
+  pageName
 }) => {
+  const { hasAccess } = useAuth();
+  
+  // Якщо немає доступу до сторінки, не показуємо пункт меню
+  if (!hasAccess(pageName)) return null;
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -67,6 +75,7 @@ const NavItem: React.FC<NavItemProps> = ({
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const location = useLocation();
 
   return (
     <aside className={cn(
@@ -92,16 +101,86 @@ const Sidebar = () => {
       </div>
       
       <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto scrollbar-none">
-        <NavItem icon={BarChart4} label="Dashboard" isActive to="/" collapsed={collapsed} />
-        <NavItem icon={Search} label="Vulnerability Scans" to="/scans" collapsed={collapsed} />
-        <NavItem icon={Server} label="Services" to="/services" collapsed={collapsed} />
-        <NavItem icon={Laptop} label="Assets" to="/assets" collapsed={collapsed} />
-        <NavItem icon={AlertTriangle} label="Alerts" to="/alerts" collapsed={collapsed} />
-        <NavItem icon={Activity} label="Monitoring" to="/monitoring" collapsed={collapsed} />
-        <NavItem icon={Lock} label="Security" to="/security" collapsed={collapsed} />
-        <NavItem icon={Link2} label="Connections" to="/connections" collapsed={collapsed} />
-        <NavItem icon={Bell} label="Notifications" to="/notifications" collapsed={collapsed} />
-        <NavItem icon={Settings} label="Settings" to="/settings" collapsed={collapsed} />
+        <NavItem 
+          icon={BarChart4} 
+          label="Dashboard" 
+          isActive={location.pathname === '/'} 
+          to="/" 
+          collapsed={collapsed}
+          pageName="dashboard"
+        />
+        <NavItem 
+          icon={Search} 
+          label="Vulnerability Scans" 
+          isActive={location.pathname === '/scans'} 
+          to="/scans" 
+          collapsed={collapsed}
+          pageName="scans"
+        />
+        <NavItem 
+          icon={Server} 
+          label="Services" 
+          isActive={location.pathname === '/services'} 
+          to="/services" 
+          collapsed={collapsed}
+          pageName="services"
+        />
+        <NavItem 
+          icon={Laptop} 
+          label="Assets" 
+          isActive={location.pathname === '/assets'} 
+          to="/assets" 
+          collapsed={collapsed}
+          pageName="assets"
+        />
+        <NavItem 
+          icon={AlertTriangle} 
+          label="Alerts" 
+          isActive={location.pathname === '/alerts'} 
+          to="/alerts" 
+          collapsed={collapsed}
+          pageName="alerts"
+        />
+        <NavItem 
+          icon={Activity} 
+          label="Monitoring" 
+          isActive={location.pathname === '/monitoring'} 
+          to="/monitoring" 
+          collapsed={collapsed}
+          pageName="monitoring"
+        />
+        <NavItem 
+          icon={Lock} 
+          label="Security" 
+          isActive={location.pathname === '/security'} 
+          to="/security" 
+          collapsed={collapsed}
+          pageName="security"
+        />
+        <NavItem 
+          icon={Link2} 
+          label="Connections" 
+          isActive={location.pathname === '/connections'} 
+          to="/connections" 
+          collapsed={collapsed}
+          pageName="connections"
+        />
+        <NavItem 
+          icon={Bell} 
+          label="Notifications" 
+          isActive={location.pathname === '/notifications'} 
+          to="/notifications" 
+          collapsed={collapsed}
+          pageName="notifications"
+        />
+        <NavItem 
+          icon={Settings} 
+          label="Settings" 
+          isActive={location.pathname.startsWith('/settings')} 
+          to="/settings" 
+          collapsed={collapsed}
+          pageName="settings"
+        />
       </nav>
       
       <div className="p-3 border-t border-sidebar-border mt-auto">

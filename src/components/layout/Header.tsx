@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Bell, Settings, User } from 'lucide-react';
+import { Bell, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
   DropdownMenu, 
@@ -10,8 +10,12 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
+import LogoutButton from '@/components/auth/LogoutButton';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Header = () => {
+  const { user } = useAuth();
+
   return (
     <header className="w-full h-16 border-b border-border/40 backdrop-blur-sm bg-background/80 flex items-center justify-between px-6 sticky top-0 z-50">
       <div className="flex items-center space-x-2">
@@ -31,19 +35,19 @@ const Header = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>Settings</DropdownMenuLabel>
+            <DropdownMenuLabel>Налаштування</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Preferences</DropdownMenuItem>
-            <DropdownMenuItem>Notifications</DropdownMenuItem>
+            <DropdownMenuItem>Профіль</DropdownMenuItem>
+            <DropdownMenuItem>Налаштування</DropdownMenuItem>
+            <DropdownMenuItem>Сповіщення</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Log out</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <a href="/settings/account">Керування акаунтами</a>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         
-        <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center text-white">
-          <User className="h-4 w-4" />
-        </div>
+        <LogoutButton />
       </div>
     </header>
   );
