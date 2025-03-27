@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth, User, AccessLevel } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -110,14 +109,21 @@ export const AccountSettings = () => {
     });
   };
 
-  const handleAddUser = (data: UserFormValues) => {
-    addUser(data);
+  const createUser = (userData: Omit<User, "id">) => {
+    if (!userData.role) {
+      userData.role = "user"; // Default role if none provided
+    }
+    addUser(userData);
     toast({
       title: "Користувача додано",
-      description: `Користувача ${data.name} успішно додано до системи.`,
+      description: `Користувача ${userData.name} успішно додано до системи.`,
     });
     setIsAddDialogOpen(false);
     resetForm();
+  };
+
+  const handleAddUser = (data: UserFormValues) => {
+    createUser(data);
   };
 
   const handleEditUser = (data: UserFormValues) => {
