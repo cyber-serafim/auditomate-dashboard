@@ -1,21 +1,19 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth, User, AccessLevel } from '@/contexts/AuthContext';
 import { useDb } from '@/contexts/DbContext';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Pencil, Trash2, UserPlus, Shield } from 'lucide-react';
+import { Pen, Trash2, UserPlus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 
 const userFormSchema = z.object({
   username: z.string().min(3, { message: 'Ім\'я користувача має бути не менше 3 символів' }),
@@ -47,7 +45,6 @@ export const AccountSettings = () => {
   const { toast } = useToast();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const form = useForm<UserFormValues>({
@@ -77,23 +74,14 @@ export const AccountSettings = () => {
     });
   };
 
-  const createUser = async (userData: UserFormValues) => {
+  const createUser = async (userData: Omit<User, "id">) => {
     if (!userData.role) {
       userData.role = "user"; // Default role if none provided
     }
     
-    // Ensure all required fields are present
-    const newUser: Omit<User, "id"> = {
-      username: userData.username,
-      password: userData.password,
-      name: userData.name,
-      role: userData.role,
-      pageAccess: userData.pageAccess
-    };
+    addUser(userData);
     
-    addUser(newUser);
-    
-    const savedUser = await saveUser(newUser);
+    const savedUser = await saveUser(userData);
     
     if (savedUser) {
       toast({
@@ -131,9 +119,8 @@ export const AccountSettings = () => {
     }
   };
 
-  const handleDeleteUser = async () => {
-    if (selectedUser) {
-      const id = selectedUser.id;
+  const handleDeleteUser = async (id: string) => {
+    if (window.confirm("Ви впевнені, що хочете видалити цього користувача?")) {
       deleteUser(id);
       
       const success = await removeUser(id);
@@ -143,7 +130,6 @@ export const AccountSettings = () => {
           title: "Користувача видалено",
           description: "Користувача успішно видалено з системи.",
         });
-        setIsDeleteDialogOpen(false);
       }
     }
   };
