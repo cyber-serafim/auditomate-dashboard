@@ -41,9 +41,12 @@ const ContactForm: React.FC = () => {
     setIsSubmitting(true);
     
     try {
-      // Додаємо інформацію про мову
+      // Додаємо інформацію про мову і відправляємо всі обов'язкові поля
       const result = await sendContactForm({
-        ...data,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        message: data.message,
         language: language,
       });
       
